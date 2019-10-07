@@ -355,7 +355,6 @@ export default {
 	},
 	
 	targetReachedHandler: function(){
-		alert("Sieg!"); 
 		if(window.vm.level < 8){ // Level: 0-8
 			alert("Gewonnen!\nAuf zum nächsten Level!");
 			var levelNew = window.vm.level + 1;
