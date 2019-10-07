@@ -244,6 +244,7 @@ export default {
       shovels: [true, true],
       playground: [],
 	  groesse: 4,
+	  playInProgress: false,
 	  
 	  // fuer Wegesuche
 	  belegt: [1,0,1,0,1,1,0,1,0,1,0,0,0,1,1,1], // 0: leer, 1: belegt 
@@ -284,8 +285,8 @@ export default {
 		window.vm.touch = e.targetTouches[0];
 		e.target.style.display='none';
 		document.getElementById('movingshovel').style.display='block';
-		document.getElementById('movingshovel').style.left=window.vm.touch.screenX-38+"px";
-		document.getElementById('movingshovel').style.top=window.vm.touch.screenY-38+"px";
+		document.getElementById('movingshovel').style.left=window.vm.touch.pageX-38+"px";
+		document.getElementById('movingshovel').style.top=window.vm.touch.pageY-38+"px";
 	},
 
 	dragEnd: function(e){
@@ -346,11 +347,15 @@ export default {
 	},
     
 	playHandler: function(ev) {
-		var geschafft = window.vm.wegeSuche();
-		if(geschafft == false){
-			alert("Der Weg ist nicht frei.");
-		}else{
-			window.vm.laufen();
+		if(!window.vm.playInProgress){
+			window.vm.playInProgress = true;
+			var geschafft = window.vm.wegeSuche();
+			if(geschafft == false){
+				alert("Der Weg ist nicht frei.");
+				window.vm.playInProgress = false;
+			}else{
+				window.vm.laufen();
+			}
 		}
 	},
 	
@@ -362,7 +367,9 @@ export default {
 		}else{
 			alert("Alle Level geschafft!");
 		}
+		window.vm.playInProgress = false;
 	},
+	
 	reset: function(ev) {
 		window.vm.loadLevel(window.vm.level);
 	},
@@ -488,7 +495,7 @@ export default {
 		if(window.vm.weg.length != 0){
 			setTimeout("window.vm.laufen("+next+")", 500);	
 		}else{
-			window.vm.targetReachedHandler();
+			setTimeout("window.vm.targetReachedHandler()", 10);
 		}
 	},
 	
@@ -517,6 +524,7 @@ export default {
 		window.vm.weg = [];
 		window.vm.draggedShovel = -1;
 		window.vm.touch = null;
+		window.vm.playInProgress = false;
 		// Playground & Shovels HTML aktualisieren aus Leveldaten
 		document.getElementById('playground').innerHTML = document.getElementById('playground'+levelNo).innerHTML;
 		if(window.vm.shovels.length == 2){
@@ -596,12 +604,18 @@ table {
 
 #left-panel {
   background-color: #736f6d;
-  width: 25%;
+  width:25%;
+  min-width:290px;
   position: relative;
   height: 100%;
   padding: 1%;
   border: 2px solid #666260;
   /*	box-shadow: 5px 5px rgba(0,0,0,0.5); */
+}
+@media (max-width: 850px) {
+	#left-panel {
+		max-width:210px;
+	}
 }
 
 #crocoWater {
